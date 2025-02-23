@@ -3,17 +3,19 @@ from rich import print
 import json, re
 
 class Chain:
-    def __init__(self, llm_provider: LLMProvider):
-        self.commands = {}
+    def __init__(self, llm_provider: LLMProvider, debug: bool = False):
         self.llm_provider = llm_provider
+        self.debug = debug
+
+        self.commands = {}
         self.chat = llm_provider.start_chat()
 
-    def command(self, name: str, description: str):
+    def command(self, name: str, description: list[str]):
         """ Decorator to register a command function.
         """
         def decorator(command_function):
             self.commands[name] = {
-                'description': description,
+                'description': ' '.join(description),
                 'function': command_function,
                 'arguments': {
                     argument: str(command_function.__annotations__[argument].__name__)
@@ -23,10 +25,10 @@ class Chain:
 
         return decorator
 
-    def init(self, description: str):
+    def init(self, description: list[str]):
         response = self.chat.send_message([
             'You are an intelligent AI assistant.',
-            description,
+            ' '.join(description),
             'You can answer questions provided by users.',
             'To get the necessary data to your context, you can execute commands.',
             'To execute a command, you have to send a JSON message with the following structure: {"command": "command_name", "arguments": {"argument_name": "argument_value"}}.',
@@ -68,7 +70,8 @@ class Chain:
                 raise Exception('Command not found.')
             
             command = self.commands[requested_command['command']]
-            print(f'Executing command: {requested_command}')
+            if self.debug:
+                print(f'Executing command: {requested_command}')
 
             command_answer = command['function'](
                 **{
@@ -76,7 +79,8 @@ class Chain:
                         for argument in command['arguments']
                 },
             )
-            # print(f'Providing answer: {command_answer}')
+            if self.debug:
+                print(f'Providing answer: {command_answer}')
 
             response = self.chat.send_message([
                 json.dumps(command_answer),
