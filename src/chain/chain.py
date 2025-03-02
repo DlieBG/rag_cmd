@@ -83,5 +83,5 @@ class Chain:
                 print(f'Providing answer: {command_answer}')
 
             response = self.chat.send_message([
-                json.dumps(command_answer),
+                repr(command_answer),
             ])
