@@ -28,25 +28,7 @@ class Neo4JStore(ChainAdapter):
                     'CALL apoc.meta.schema();'
                 )
 
-                schema = records[0]['value']
-
-                # for object in tqdm(schema):
-                #     match schema[object]['type']:
-                #         case 'node':
-                #             for property in schema[object]['properties']:
-                #                 if schema[object]['properties'][property]['type'] == 'STRING':
-                #                     records, _, _ = driver.execute_query(
-                #                         f'MATCH (n:{object}) RETURN DISTINCT n.{property} AS value;'
-                #                     )
-                #                     if len(records) < 10:
-                #                         schema[object]['properties'][property]['values'] = [
-                #                             r['value'] for r in records
-                #                         ]
-
-                #         case 'relationship':
-                #             pass
-
-                return schema
+                return records[0]['value']
         
         @chain.command(
             name='Neo4J Node Property String Values',
@@ -78,8 +60,8 @@ class Neo4JStore(ChainAdapter):
         )
         def _(cypher: str):
             with GraphDatabase.driver(
-                uri="bolt://127.0.0.1:7688/neo4j",
-                auth=("neo4j", "12345678"),
+                uri=NEO4J_URI,
+                auth=(NEO4J_USER, NEO4J_PASSWORD),
             ) as driver:
                 records, _, _ = driver.execute_query(
                     cypher
