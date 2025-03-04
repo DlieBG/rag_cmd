@@ -22,7 +22,7 @@ class GeminiLLMChat(LLMChat):
                 return response.text
             except:
                 print('Gemini Timeout, please wait...')
-                sleep(60)
+                sleep(30)
 
 class GeminiLLMProvider(LLMProvider):
     def __init__(self):

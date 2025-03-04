@@ -23,12 +23,12 @@ chain.init(
 )
 
 print(
-    # chain.ask(
-    #     question='How many patients are in remission?',
-    # )
     chain.ask(
-        question='Retrieve information about patients who did not achieve remission.',
+        question='How many patients are in remission?',
     )
+    # chain.ask(
+    #     question='Retrieve information about patients who did not achieve remission.',
+    # )
 
     # chain.ask(
     #     question='Tell me the patient ids of patients treated with Olmkicept.',
