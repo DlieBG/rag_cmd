@@ -12,12 +12,15 @@ class GeminiLLMChat(LLMChat):
     def __init__(self, chat: genai.chats.Chat):
         self.chat = chat
     
-    def send_message(self, message: list[str]) -> str:
+    def send_message(self, message: list[str], debug: bool = False) -> str:
         while True:
             try:
                 response = self.chat.send_message(
-                    message='\n'.join(message)
+                    message='\n'.join(message),
                 )
+
+                if debug:
+                    print('Gemini usage metadata:', response.usage_metadata)
 
                 return response.text
             except:

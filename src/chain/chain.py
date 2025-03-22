@@ -26,31 +26,37 @@ class Chain:
         return decorator
 
     def init(self, description: list[str]):
-        response = self.chat.send_message([
-            'You are an intelligent AI assistant.',
-            ' '.join(description),
-            'You can answer questions provided by users.',
-            'To get the necessary data to your context, you can execute commands.',
-            'To execute a command, you have to send a JSON message with the following structure: {"command": "command_name", "arguments": {"argument_name": "argument_value"}}.',
-            'You can execute multiple commands before you have to answer the user.',
-            'To answer the user, you can use the command "answer" with the argument "message".',
-            'The available commands are: [{}]'.format(', '.join([
-                json.dumps({
-                    'name': command,
-                    'description': self.commands[command]['description'],
-                    'arguments': self.commands[command]['arguments'],
-                }) for command in self.commands
-            ])),
-            'To confirm that the instructions have been understood, reply with ok.',
-        ])
+        response = self.chat.send_message(
+            message=[
+                'You are an intelligent AI assistant.',
+                ' '.join(description),
+                'You can answer questions provided by users.',
+                'To get the necessary data to your context, you can execute commands.',
+                'To execute a command, you have to send a JSON message with the following structure: {"command": "command_name", "arguments": {"argument_name": "argument_value"}}.',
+                'You can execute multiple commands before you have to answer the user.',
+                'To answer the user, you can use the command "answer" with the argument "message".',
+                'The available commands are: [{}]'.format(', '.join([
+                    json.dumps({
+                        'name': command,
+                        'description': self.commands[command]['description'],
+                        'arguments': self.commands[command]['arguments'],
+                    }) for command in self.commands
+                ])),
+                'To confirm that the instructions have been understood, reply with ok.',
+            ],
+            debug=self.debug,
+        )
 
         if response.strip() != 'ok':
             raise Exception('The instructions were not understood.')
 
     def ask(self, question: str) -> str:
-        response = self.chat.send_message([
-            f'The user asked: {question}',
-        ])
+        response = self.chat.send_message(
+            message=[
+                f'The user asked: {question}',
+            ],
+            debug=self.debug,
+        )
 
         while True:
             requested_commands = re.findall(
@@ -82,6 +88,9 @@ class Chain:
             if self.debug:
                 print(f'Providing answer: {command_answer}')
 
-            response = self.chat.send_message([
-                repr(command_answer),
-            ])
+            response = self.chat.send_message(
+                message=[
+                    repr(command_answer),
+                ],
+                debug=self.debug,
+            )
