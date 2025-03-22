@@ -17,6 +17,9 @@ class GeminiLLMChat(LLMChat):
             try:
                 response = self.chat.send_message(
                     message='\n'.join(message),
+                    config={
+                        'temperature': 1.3,
+                    },
                 )
 
                 if debug:
