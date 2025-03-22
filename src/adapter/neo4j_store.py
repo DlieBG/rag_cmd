@@ -2,7 +2,7 @@ from adapter.chain_adapter import ChainAdapter
 from dotenv import load_dotenv, find_dotenv
 from neo4j import GraphDatabase
 from chain.chain import Chain
-import os
+import json, os
 
 load_dotenv(find_dotenv())
 
@@ -28,7 +28,27 @@ class Neo4JStore(ChainAdapter):
                     'CALL apoc.meta.schema();'
                 )
 
-                return records[0]['value']
+                schema = records[0]['value']
+
+                for object in schema:
+                    for property in schema[object]['properties']:
+                        # reduce properties to their type
+                        schema[object]['properties'][property] = schema[object]['properties'][property]['type']
+
+                    for relationship in list(
+                        schema[object].get('relationships', [])
+                    ):
+                        # reduce redundant relationship properties
+                        del schema[object]['relationships'][relationship]['properties']
+
+                        if schema[object]['relationships'][relationship]['count'] == 0:
+                            # remove relationships with no nodes
+                            del schema[object]['relationships'][relationship]
+        
+                return json.dumps(
+                    obj=schema,
+                    separators=(',', ':'),
+                )
         
         @chain.command(
             name='Neo4J Database Node Property Values',
