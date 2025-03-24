@@ -1,14 +1,52 @@
+from cache.cache_provider import CacheProvider
 from llm.llm_provider import LLMProvider
 from rich import print
 import json, re
 
 class Chain:
-    def __init__(self, llm_provider: LLMProvider, debug: bool = False):
+    def __init__(self, llm_provider: LLMProvider, cache_provider: CacheProvider = None, debug: bool = False):
         self.llm_provider = llm_provider
+        self.cache_provider = cache_provider
         self.debug = debug
 
         self.commands = {}
         self.chat = llm_provider.start_chat()
+
+    def _execute_command(self, requested_command: dict) -> str:
+        if requested_command['command'] not in self.commands:
+            raise Exception('Command not found.')
+        
+        command = self.commands[requested_command['command']]
+        if self.debug:
+            print(f'Executing command: {requested_command}')
+
+        if self.cache_provider and (cached_result := self.cache_provider.get(
+            topic='command_cache',
+            key=json.dumps(requested_command),
+        )):
+            if self.debug:
+                print('Cache hit!')
+
+            return cached_result
+
+        command_result = command['function'](
+            **{
+                argument: requested_command['arguments'][argument]
+                    for argument in command['arguments']
+            },
+        )
+
+        if self.cache_provider:
+            if self.debug:
+                print('Cache miss!')
+
+            self.cache_provider.set(
+                topic='command_cache',
+                key=json.dumps(requested_command),
+                value=command_result,
+            )
+
+        return command_result
 
     def command(self, name: str, description: list[str]):
         """ Decorator to register a command function.
@@ -71,26 +109,17 @@ class Chain:
 
             if requested_command['command'] == 'answer':
                 return requested_command['arguments']['message']
-            
-            if requested_command['command'] not in self.commands:
-                raise Exception('Command not found.')
-            
-            command = self.commands[requested_command['command']]
-            if self.debug:
-                print(f'Executing command: {requested_command}')
 
-            command_answer = command['function'](
-                **{
-                    argument: requested_command['arguments'][argument]
-                        for argument in command['arguments']
-                },
+            command_result = self._execute_command(
+                requested_command=requested_command,
             )
+            
             if self.debug:
-                print(f'Providing answer: {command_answer}')
+                print(f'Providing answer: {command_result}')
 
             response = self.chat.send_message(
                 message=[
-                    repr(command_answer),
+                    repr(command_result),
                 ],
                 debug=self.debug,
             )
