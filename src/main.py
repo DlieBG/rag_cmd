@@ -1,10 +1,14 @@
+from cache.mongo_provider import MongoCacheProvider
 from llm.gemini_provider import GeminiLLMProvider
 from adapter.test_adapter import TestAdapter
 from adapter.neo4j_store import Neo4JStore
 from chain.chain import Chain
 
+cache = MongoCacheProvider()
+
 chain = Chain(
     llm_provider=GeminiLLMProvider(),
+    cache_provider=cache,
     debug=True,
 )
 

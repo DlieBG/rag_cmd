@@ -3,6 +3,8 @@ from llm.llm_provider import LLMProvider
 from rich import print
 import json, re
 
+COMMAND_CACHE_TOPIC = 'command_cache'
+
 class Chain:
     def __init__(self, llm_provider: LLMProvider, cache_provider: CacheProvider = None, debug: bool = False):
         self.llm_provider = llm_provider
@@ -21,7 +23,7 @@ class Chain:
             print(f'Executing command: {requested_command}')
 
         if self.cache_provider and (cached_result := self.cache_provider.get(
-            topic='command_cache',
+            topic=COMMAND_CACHE_TOPIC,
             key=json.dumps(requested_command),
         )):
             if self.debug:
@@ -41,7 +43,7 @@ class Chain:
                 print('Cache miss!')
 
             self.cache_provider.set(
-                topic='command_cache',
+                topic=COMMAND_CACHE_TOPIC,
                 key=json.dumps(requested_command),
                 value=command_result,
             )
