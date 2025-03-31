@@ -1,5 +1,8 @@
 python-dotenv
 google-genai
 pymongo[srv]
+pydantic
+uvicorn
+fastapi
 neo4j
 rich
