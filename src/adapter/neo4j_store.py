@@ -1,7 +1,7 @@
-from adapter.chain_adapter import ChainAdapter
+from adapter.agent_adapter import AgentAdapter
 from dotenv import load_dotenv, find_dotenv
 from neo4j import GraphDatabase
-from chain.chain import Chain
+from core.agent import Agent
 import json, os
 
 load_dotenv(find_dotenv())
@@ -10,9 +10,9 @@ NEO4J_URI = os.getenv('NEO4J_URI')
 NEO4J_USER = os.getenv('NEO4J_USER')
 NEO4J_PASSWORD = os.getenv('NEO4J_PASSWORD')
 
-class Neo4JStore(ChainAdapter):
-    def __init__(self, chain: Chain):
-        @chain.command(
+class Neo4JStoreAdapter(AgentAdapter):
+    def __init__(self, agent: Agent):
+        @agent.command(
             name='Neo4J Database Schema',
             description=[
                 'Get the Schema Information of the Neo4J Database.',
@@ -50,7 +50,7 @@ class Neo4JStore(ChainAdapter):
                     separators=(',', ':'),
                 )
         
-        @chain.command(
+        @agent.command(
             name='Neo4J Database Node Property Values',
             description=[
                 'Get the possible VALUES of a nodes property.',
@@ -70,7 +70,7 @@ class Neo4JStore(ChainAdapter):
                     r['value'] for r in records
                 ]
         
-        @chain.command(
+        @agent.command(
             name='Neo4J Database Sample Nodes',
             description=[
                 'Get some sample Nodes.',
@@ -88,7 +88,7 @@ class Neo4JStore(ChainAdapter):
 
                 return records
 
-        @chain.command(
+        @agent.command(
             name='Neo4J Database Cypher Query',
             description=[
                 'Query the Neo4J Database using Cypher Query.',
@@ -101,8 +101,11 @@ class Neo4JStore(ChainAdapter):
                 uri=NEO4J_URI,
                 auth=(NEO4J_USER, NEO4J_PASSWORD),
             ) as driver:
-                records, _, _ = driver.execute_query(
-                    cypher
-                )
+                try:
+                    records, _, _ = driver.execute_query(
+                        cypher
+                    )
 
-                return records
+                    return records
+                except Exception as e:
+                    return str(e)
