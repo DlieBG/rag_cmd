@@ -30,7 +30,7 @@ class Chat:
             case _:
                 raise Exception('LLM type not supported.')
 
-    def _aquire_lock(self):
+    def _acquire_lock(self):
         if not self.db_provider.lock.acquire(
             id=self.model.id,
         ):
@@ -53,7 +53,7 @@ class Chat:
         )
 
     def send_message(self, text: str) -> list[MessageModel]:
-        self._aquire_lock()
+        self._acquire_lock()
 
         try:
             self._refresh_model()
