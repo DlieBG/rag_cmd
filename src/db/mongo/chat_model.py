@@ -2,6 +2,7 @@ from models.chat import ChatIdModel, ChatModel, LLMType, MessageModel
 from db.chat_model_provider import ChatModelProvider
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
+from typing import Optional
 from bson import ObjectId
 import os
 
@@ -17,7 +18,7 @@ class MongoChatModelProvider(ChatModelProvider):
 
         self.collection = self.client[MONGO_DATABASE_NAME][MONGO_COLLECTION_NAME]
 
-    def _to_chat_model(self, chat_model: dict) -> ChatModel:
+    def _to_chat_model(self, chat_model: dict) -> Optional[ChatModel]:
         if not chat_model:
             return None
 
