@@ -11,6 +11,7 @@ class MongoCacheProvider(CacheProvider):
         self.client = MongoClient(
             os.getenv('MONGO_URI'),
             server_api=ServerApi('1'),
+            connect=False,
         )
 
         self.collection = self.client[MONGO_DATABASE_NAME][MONGO_COLLECTION_NAME]
