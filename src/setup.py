@@ -1,10 +1,10 @@
-from db.mongo.chat_model import MongoChatModelProvider
-from adapter.neo4j_store import Neo4JStoreAdapter
-from db.mongo.state import MongoStateProvider
-from db.mongo.cache import MongoCacheProvider
-from db.mongo.lock import MongoLockProvider
-from db.db_provider import DBProvider
-from core.agent import Agent
+from src.db.mongo.chat_model import MongoChatModelProvider
+from src.adapter.neo4j_store import Neo4JStoreAdapter
+from src.db.mongo.state import MongoStateProvider
+from src.db.mongo.cache import MongoCacheProvider
+from src.db.mongo.lock import MongoLockProvider
+from src.db.db_provider import DBProvider
+from src.core.agent import Agent
 
 db_provider = DBProvider(
     chat_model_provider=MongoChatModelProvider(),

@@ -1,5 +1,5 @@
+from src.db.state_provider import StateProvider
 from pymongo.mongo_client import MongoClient
-from db.state_provider import StateProvider
 from pymongo.server_api import ServerApi
 from bson import ObjectId
 import os
@@ -12,6 +12,7 @@ class MongoStateProvider(StateProvider):
         self.client = MongoClient(
             os.getenv('MONGO_URI'),
             server_api=ServerApi('1'),
+            connect=False,
         )
 
         self.collection = self.client[MONGO_DATABASE_NAME][MONGO_COLLECTION_NAME]

@@ -1,7 +1,7 @@
-from db.chat_model_provider import ChatModelProvider
-from db.state_provider import StateProvider
-from db.cache_provider import CacheProvider
-from db.lock_provider import LockProvider
+from src.db.chat_model_provider import ChatModelProvider
+from src.db.state_provider import StateProvider
+from src.db.cache_provider import CacheProvider
+from src.db.lock_provider import LockProvider
 
 class DBProvider:
     def __init__(self, chat_model_provider: ChatModelProvider, lock_provider: LockProvider, state_provider: StateProvider, cache_provider: CacheProvider):
