@@ -1,5 +1,5 @@
-from db.db_provider import DBProvider
-from core.command import Command
+from src.db.db_provider import DBProvider
+from src.core.command import Command
 
 class Agent:
     """ Agent class to collect and execute commands for a specific agent use case.

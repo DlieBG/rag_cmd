@@ -1,6 +1,6 @@
-from db.db_provider import DBProvider
-from models.chat import MessageModel
-from core.agent import Agent
+from src.db.db_provider import DBProvider
+from src.models.chat import MessageModel
+from src.core.agent import Agent
 
 class LLMProvider:
     def __init__(self, db_provider: DBProvider, agent: Agent, id: str):

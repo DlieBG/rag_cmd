@@ -1,5 +1,5 @@
+from src.db.lock_provider import LockProvider
 from pymongo.mongo_client import MongoClient
-from db.lock_provider import LockProvider
 from pymongo.server_api import ServerApi
 import os
 

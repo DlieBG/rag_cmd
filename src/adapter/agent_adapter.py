@@ -1,4 +1,4 @@
-from core.agent import Agent
+from src.core.agent import Agent
 
 class AgentAdapter:
     def __init__(self, agent: Agent):

@@ -1,7 +1,7 @@
-from adapter.agent_adapter import AgentAdapter
+from src.adapter.agent_adapter import AgentAdapter
 from dotenv import load_dotenv, find_dotenv
+from src.core.agent import Agent
 from neo4j import GraphDatabase
-from core.agent import Agent
 import json, os
 
 load_dotenv(find_dotenv())

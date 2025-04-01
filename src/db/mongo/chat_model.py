@@ -1,5 +1,5 @@
-from models.chat import ChatIdModel, ChatModel, LLMType, MessageModel
-from db.chat_model_provider import ChatModelProvider
+from src.models.chat import ChatIdModel, ChatModel, LLMType, MessageModel
+from src.db.chat_model_provider import ChatModelProvider
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 from typing import Optional

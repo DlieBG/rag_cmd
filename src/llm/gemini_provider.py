@@ -1,11 +1,11 @@
-from models.chat import MessageModel, RoleType, CommandModel
+from src.models.chat import MessageModel, RoleType, CommandModel
 from google.genai.chats import Chat, Part, Content
 from google.genai.types import FunctionResponse
+from src.llm.llm_provider import LLMProvider
 from dotenv import load_dotenv, find_dotenv
-from llm.llm_provider import LLMProvider
-from db.db_provider import DBProvider
+from src.db.db_provider import DBProvider
+from src.core.agent import Agent
 from google.genai import types
-from core.agent import Agent
 from google import genai
 import os
 

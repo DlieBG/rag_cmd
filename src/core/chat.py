@@ -1,8 +1,8 @@
-from llm.gemini_provider import GeminiLLMProvider
-from models.chat import LLMType, MessageModel
-from llm.llm_provider import LLMProvider
-from db.db_provider import DBProvider
-from core.agent import Agent
+from src.llm.gemini_provider import GeminiLLMProvider
+from src.models.chat import LLMType, MessageModel
+from src.llm.llm_provider import LLMProvider
+from src.db.db_provider import DBProvider
+from src.core.agent import Agent
 
 class Chat:
     def __init__(self, db_provider: DBProvider, agent: Agent, id: str):

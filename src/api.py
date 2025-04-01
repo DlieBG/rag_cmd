@@ -1,7 +1,8 @@
-from models.chat import ChatIdModel, ChatModel, LLMType, MessageModel
+from src.models.chat import ChatIdModel, ChatModel, LLMType, MessageModel
+from src.setup import db_provider, agent
+from src.core.chat import Chat
 from fastapi import FastAPI
-from setup import db_provider, agent
-from core.chat import Chat
+import uvicorn
 
 api = FastAPI()
 
@@ -44,4 +45,12 @@ def send_message(id: str, text: str) -> list[MessageModel]:
 
     return chat.send_message(
         text=text,
+    )
+
+def start_api(reload: bool):
+    uvicorn.run(
+        app='src.api:api',
+        host='0.0.0.0',
+        port=8000,
+        reload=reload,
     )

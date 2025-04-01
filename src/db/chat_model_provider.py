@@ -1,4 +1,4 @@
-from models.chat import ChatIdModel, ChatModel, LLMType
+from src.models.chat import ChatIdModel, ChatModel, LLMType
 
 class ChatModelProvider:
     def get_chat_models(self) -> list[ChatModel]:

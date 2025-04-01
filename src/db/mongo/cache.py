@@ -1,5 +1,5 @@
 from pymongo.mongo_client import MongoClient
-from db.cache_provider import CacheProvider
+from src.db.cache_provider import CacheProvider
 from pymongo.server_api import ServerApi
 import os
 
