@@ -1,4 +1,4 @@
-from src.models.chat import RoleType, LLMType
+from src.models.chat import RoleType, LLMType, MessageModel
 from src.setup import db_provider, agent
 from rich.markdown import Markdown
 from rich.console import Console
@@ -104,7 +104,7 @@ def create_chat(llm_type: LLMType):
 def connect__to_chat(id: str):
     console = Console()
 
-    def _render_message(message_model):
+    def _render_message(message_model: MessageModel):
         if message_model.role == RoleType.USER:
             console.print(
                 Align.right(
@@ -141,6 +141,7 @@ def connect__to_chat(id: str):
                                 {
                                     'command_name': message_model.command.name,
                                     'arguments': message_model.command.arguments,
+                                    'cache_hit': message_model.command.cache_hit,
                                 },
                                 indent_size=4,
                                 expand_all=True,
