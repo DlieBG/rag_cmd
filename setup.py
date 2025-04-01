@@ -22,7 +22,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'rag_cmd=src.main:cli',
+            'rag_cmd=src.cli:cli',
         ],
     },
 )
