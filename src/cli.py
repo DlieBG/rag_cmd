@@ -101,7 +101,7 @@ def create_chat(llm_type: LLMType):
     prompt=True,
     help='ID of the chat to connect to.',
 )
-def connect__to_chat(id: str):
+def connect_to_chat(id: str):
     console = Console()
 
     def _render_message(message_model: MessageModel):
