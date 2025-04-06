@@ -92,7 +92,7 @@ class Neo4JStoreAdapter(AgentAdapter):
             name='Neo4J Database Cypher Query',
             description=[
                 'Query the Neo4J Database using Cypher Query.',
-                'You have to align your capher queries to the schema of the database!',
+                'You have to align your cypher queries to the schema of the database!',
                 'Most of the time you should run multiple queries to get the desired information.',
             ],
         )

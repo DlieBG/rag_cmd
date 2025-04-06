@@ -16,6 +16,7 @@ setup(
         'pydantic',
         'uvicorn',
         'fastapi',
+        'openai',
         'click',
         'neo4j',
         'rich',

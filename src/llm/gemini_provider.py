@@ -95,12 +95,16 @@ class GeminiLLMProvider(LLMProvider):
             ),
         ).candidates[0].content
 
-        state.append(request_content.model_dump(
-            mode='json',
-        ))
-        state.append(response_content.model_dump(
-            mode='json',
-        ))
+        state.append(
+            request_content.model_dump(
+                mode='json',
+            )
+        )
+        state.append(
+            response_content.model_dump(
+                mode='json',
+            )
+        )
 
         return response_content
 
