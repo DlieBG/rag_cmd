@@ -14,7 +14,10 @@ db_provider = DBProvider(
 )
 
 agent = Agent(
-    system_description='You have access to a medical graph database and you are an medical expert. Please query the property values before writing cypher queries. You should always start with the Schema Query.',
+    system_description=[
+        'You have access to a medical graph database and you are an medical expert.',
+        'Please query the property values before writing cypher queries. You should always start with the Schema Query.',
+    ],
     db_provider=db_provider,
     cache_commands=True,
 )

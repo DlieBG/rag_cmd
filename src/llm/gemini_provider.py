@@ -63,7 +63,7 @@ class GeminiLLMProvider(LLMProvider):
             message=request_content.parts,
             config=types.GenerateContentConfig(
                 temperature=1.3,
-                system_instruction=self.agent.system_description,
+                system_instruction=' '.join(self.agent.system_description),
                 tools=[
                     types.Tool(
                         function_declarations=[

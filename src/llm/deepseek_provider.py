@@ -50,7 +50,7 @@ class DeepseekLLMProvider(LLMProvider):
             messages=[
                 {
                     'role': 'system',
-                    'content': self.agent.system_description,
+                    'content': ' '.join(self.agent.system_description),
                 },
                 *state,
                 *request_contents,
