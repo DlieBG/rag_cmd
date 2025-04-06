@@ -1,4 +1,4 @@
-from src.models.chat import RoleType, LLMType, MessageModel
+from src.models.chat import RoleType, LLMType, MessageModel, ChatModel
 from src.setup import db_provider, agent
 from rich.markdown import Markdown
 from rich.console import Console
@@ -88,77 +88,62 @@ def create_chat(llm_type: LLMType):
             llm_type=llm_type,
         )
     )
+    
+def _render_message(message_model: MessageModel, console: Console):
+    if message_model.role == RoleType.USER:
+        console.print(
+            Align.right(
+                Panel(
+                    Markdown(message_model.text, justify='right'),
+                    title='[green]User',
+                    title_align='right',
+                    expand=False,
+                ),
+                width=100,
+            )
+        )
 
-@chats.command(
-    name='connect',
-    help='Connect to a chat.',
-)
-@click.option(
-    '--id',
-    '-i',
-    type=str,
-    required=True,
-    prompt=True,
-    help='ID of the chat to connect to.',
-)
-def connect_to_chat(id: str):
-    console = Console()
-
-    def _render_message(message_model: MessageModel):
-        if message_model.role == RoleType.USER:
+    if message_model.role == RoleType.ASSISTANT:
+        if message_model.text:
             console.print(
-                Align.right(
+                Align.left(
                     Panel(
-                        Markdown(message_model.text, justify='right'),
-                        title='[green]User',
-                        title_align='right',
+                        Markdown(message_model.text),
+                        title='[yellow]Assistant',
+                        title_align='left',
                         expand=False,
                     ),
                     width=100,
                 )
             )
 
-        if message_model.role == RoleType.ASSISTANT:
-            if message_model.text:
-                console.print(
-                    Align.left(
-                        Panel(
-                            Markdown(message_model.text),
-                            title='[yellow]Assistant',
-                            title_align='left',
-                            expand=False,
+        if message_model.command:
+            from rich.pretty import Pretty
+            console.print(
+                Align.center(
+                    Panel(
+                        Pretty(
+                            {
+                                'command_name': message_model.command.name,
+                                'arguments': message_model.command.arguments,
+                                'cache_hit': message_model.command.cache_hit,
+                            },
+                            indent_size=4,
+                            expand_all=True,
                         ),
-                        width=100,
-                    )
+                        title='[red]Command',
+                        title_align='left',
+                        expand=False,
+                    ),
                 )
+            ) 
 
-            if message_model.command:
-                from rich.pretty import Pretty
-                console.print(
-                    Align.center(
-                        Panel(
-                            Pretty(
-                                {
-                                    'command_name': message_model.command.name,
-                                    'arguments': message_model.command.arguments,
-                                    'cache_hit': message_model.command.cache_hit,
-                                },
-                                indent_size=4,
-                                expand_all=True,
-                            ),
-                            title='[red]Command',
-                            title_align='left',
-                            expand=False,
-                        ),
-                    )
-                ) 
-
-    chat_model = db_provider.chat.get_chat_model(
-        id=id,
-    )
-
+def _connect_to_chat(chat_model: ChatModel):
+    console = Console()
+    
     for message_model in chat_model.messages:
         _render_message(
+            console=console,
             message_model=message_model,
         )
 
@@ -173,12 +158,78 @@ def connect_to_chat(id: str):
             messages = Chat(
                 db_provider=db_provider,
                 agent=agent,
-                id=id,
+                id=chat_model.id,
             ).send_message(
                 text=text,
             )
 
         for message_model in messages:
             _render_message(
+                console=console,
                 message_model=message_model,
+            )
+
+@chats.command(
+    name='connect',
+    help='Connect to a chat.',
+)
+@click.option(
+    '--id',
+    '-i',
+    type=str,
+    required=True,
+    prompt=True,
+    help='ID of the chat to connect to.',
+)
+def connect_to_chat(id: str):
+    chat_model = db_provider.chat.get_chat_model(
+        id=id,
+    )
+
+    _connect_to_chat(
+        chat_model=chat_model,
+    )
+
+@chats.command(
+    name='debug',
+    help='Create a new chat and connect to it.',
+)
+@click.option(
+    '--llm-type',
+    '-l',
+    type=click.Choice(
+        choices=LLMType
+    ),
+    required=True,
+    prompt=True,
+    help='LLM type to use.',
+)
+@click.option(
+    '--rm',
+    is_flag=True,
+    default=False,
+    show_default=True,
+    help='Remove the chat after debugging.',
+)
+def debug_chat(llm_type: LLMType, rm: bool):
+    chat_id = str(
+        db_provider.chat.create_chat_model(
+            llm_type=llm_type,
+        ).id
+    )
+
+    print(chat_id)
+
+    chat_model = db_provider.chat.get_chat_model(
+        id=chat_id,
+    )
+
+    try:
+        _connect_to_chat(
+            chat_model=chat_model,
+        )
+    except KeyboardInterrupt:
+        if rm:
+            db_provider.remove_chat(
+                id=chat_id,
             )
