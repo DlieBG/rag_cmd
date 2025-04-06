@@ -9,3 +9,11 @@ class DBProvider:
         self.lock = lock_provider
         self.state = state_provider
         self.cache = cache_provider
+
+    def remove_chat(self, id: str):
+        self.chat.remove_chat_model(
+            id=id,
+        )
+        self.state.remove_state(
+            id=id,
+        )

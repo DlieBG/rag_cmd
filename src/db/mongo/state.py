@@ -41,3 +41,10 @@ class MongoStateProvider(StateProvider):
             },
             upsert=True,
         )
+
+    def remove_state(self, id: str):
+        self.collection.delete_one(
+            filter={
+                '_id': ObjectId(id),
+            },
+        )

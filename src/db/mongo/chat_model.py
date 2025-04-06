@@ -78,3 +78,10 @@ class MongoChatModelProvider(ChatModelProvider):
                 ),
             },
         )
+
+    def remove_chat_model(self, id: str):
+        self.collection.delete_one(
+            filter={
+                '_id': ObjectId(id),
+            },
+        )
