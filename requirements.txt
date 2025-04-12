@@ -1,0 +1,8 @@
+langchain-google-genai
+langchain-openai
+langchain-neo4j
+python-dotenv
+langchain
+langgraph
+ipython
+numpy
