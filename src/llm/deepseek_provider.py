@@ -11,6 +11,8 @@ load_dotenv(find_dotenv())
 
 DEEPSEEK_API_KEY = os.getenv('DEEPSEEK_API_KEY')
 
+DEEPSEEK_SYTEM_INSTRUCTION = []
+
 class DeepseekLLMProvider(LLMProvider):
     def __init__(self, db_provider: DBProvider, agent: Agent, id: str):
         super().__init__(
@@ -50,7 +52,12 @@ class DeepseekLLMProvider(LLMProvider):
             messages=[
                 {
                     'role': 'system',
-                    'content': ' '.join(self.agent.system_description),
+                    'content': '\n'.join(
+                        [
+                            *self.agent.system_description,
+                            *DEEPSEEK_SYTEM_INSTRUCTION,
+                        ]
+                    ),
                 },
                 *state,
                 *request_contents,
@@ -78,6 +85,7 @@ class DeepseekLLMProvider(LLMProvider):
                 }
                     for command in self.agent.commands
             ],
+            tool_choice='auto',
             stream=False,
         ).choices[0].message
 
@@ -107,6 +115,7 @@ class DeepseekLLMProvider(LLMProvider):
             state=state,
             text=text,
         )
+        print(response)
 
         while True:
             function_responses = []
@@ -157,6 +166,7 @@ class DeepseekLLMProvider(LLMProvider):
                     state=state,
                     function_responses=function_responses,
                 )
+                print(response)
             else:
                 break
 

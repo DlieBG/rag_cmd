@@ -13,6 +13,8 @@ load_dotenv(find_dotenv())
 
 GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
 
+GEMINI_SYTEM_INSTRUCTION = []
+
 class GeminiLLMProvider(LLMProvider):
     def __init__(self, db_provider: DBProvider, agent: Agent, id: str):
         super().__init__(
@@ -63,7 +65,12 @@ class GeminiLLMProvider(LLMProvider):
             message=request_content.parts,
             config=types.GenerateContentConfig(
                 temperature=1.3,
-                system_instruction=' '.join(self.agent.system_description),
+                system_instruction='\n'.join(
+                    [
+                        *self.agent.system_description,
+                        *GEMINI_SYTEM_INSTRUCTION,
+                    ]
+                ),
                 tools=[
                     types.Tool(
                         function_declarations=[
