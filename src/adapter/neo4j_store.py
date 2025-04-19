@@ -15,8 +15,8 @@ class Neo4JStoreAdapter(AgentAdapter):
         @agent.command(
             name='Neo4J Database Schema',
             description=[
-                'Get the Schema Information of the Neo4J Database.',
-                'FIRST OF ALL, YOU HAVE TO GET THE SCHEMA OF THE DATABASE. THEN YOU CAN QUERY THE DATABASE USING CYPHER QUERIES.',
+                'Get the schema of the Neo4J graph database.',
+                'You should always start with this command to understand the database.',
             ],
         )
         def database_schema():
@@ -53,8 +53,8 @@ class Neo4JStoreAdapter(AgentAdapter):
         @agent.command(
             name='Neo4J Database Node Property Values',
             description=[
-                'Get the possible VALUES of a nodes property.',
-                'YOU SHOULD ALWAYS QUERY THE POSSIBLE STRING VALUES FOR YOUR QUERIES!',
+                'Get the distinct values of a nodes property.',
+                'You should always query the possible values for your queries.',
             ],
         )
         def node_property_values(node_name: str, property_name: str):
@@ -73,8 +73,8 @@ class Neo4JStoreAdapter(AgentAdapter):
         @agent.command(
             name='Neo4J Database Sample Nodes',
             description=[
-                'Get some sample Nodes.',
-                'IT IS VERY HELPFUL TO SEE SOME SAMPLE ENTRIES OF THE DATABASE BEFORE WRITING YOUR QUERIES!',
+                'Get samples for a node.',
+                'You should always query the sample nodes for your queries.',
             ],
         )
         def sample_nodes(node_name: str, count: int):
@@ -91,7 +91,7 @@ class Neo4JStoreAdapter(AgentAdapter):
         @agent.command(
             name='Neo4J Database Cypher Query',
             description=[
-                'Query the Neo4J Database using Cypher Query.',
+                'Query the Neo4J graph database using cypher query.',
                 'You have to align your cypher queries to the schema of the database!',
                 'Most of the time you should run multiple queries to get the desired information.',
             ],

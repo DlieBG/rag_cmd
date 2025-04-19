@@ -4,7 +4,7 @@ from src.core.command import Command
 class Agent:
     """ Agent class to collect and execute commands for a specific agent use case.
     """
-    def __init__(self, system_description: str, db_provider: DBProvider, cache_commands: bool = True):
+    def __init__(self, system_description: list[str], db_provider: DBProvider, cache_commands: bool = True):
         self.system_description = system_description
         self.db_provider = db_provider
         self.cache_commands = cache_commands

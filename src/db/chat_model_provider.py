@@ -12,3 +12,6 @@ class ChatModelProvider:
     
     def update_chat_model(self, id: str, chat_model: ChatModel):
         raise NotImplementedError()
+
+    def remove_chat_model(self, id: str):
+        raise NotImplementedError()

@@ -7,11 +7,15 @@ from src.db.db_provider import DBProvider
 from src.core.agent import Agent
 from google.genai import types
 from google import genai
+from time import sleep
+from rich import print
 import os
 
 load_dotenv(find_dotenv())
 
 GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
+
+GEMINI_SYSTEM_INSTRUCTION = []
 
 class GeminiLLMProvider(LLMProvider):
     def __init__(self, db_provider: DBProvider, agent: Agent, id: str):
@@ -59,54 +63,64 @@ class GeminiLLMProvider(LLMProvider):
         if not request_content:
             raise Exception('Request content is empty.')
 
-        response_content = chat.send_message(
-            message=request_content.parts,
-            config=types.GenerateContentConfig(
-                temperature=1.3,
-                system_instruction=self.agent.system_description,
-                tools=[
-                    types.Tool(
-                        function_declarations=[
-                            types.FunctionDeclaration(
-                                name=command.name,
-                                description=' '.join(command.description),
-                                parameters={
-                                    'type': 'object',
-                                    'properties': {
-                                        argument: {
-                                            'type': self._to_gemini_data_type(
-                                                data_type=command.arguments[argument],
-                                            ),
-                                        }
-                                            for argument in command.arguments
-                                    },
-                                    'required': list(command.arguments.keys()),
-                                } if len(command.arguments) > 0 else None,
+        while True:
+            try:
+                response_content = chat.send_message(
+                    message=request_content.parts,
+                    config=types.GenerateContentConfig(
+                        temperature=1.3,
+                        system_instruction='\n'.join(
+                            [
+                                *self.agent.system_description,
+                                *GEMINI_SYSTEM_INSTRUCTION,
+                            ]
+                        ),
+                        tools=[
+                            types.Tool(
+                                function_declarations=[
+                                    types.FunctionDeclaration(
+                                        name=command.name,
+                                        description=' '.join(command.description),
+                                        parameters={
+                                            'type': 'object',
+                                            'properties': {
+                                                argument: {
+                                                    'type': self._to_gemini_data_type(
+                                                        data_type=command.arguments[argument],
+                                                    ),
+                                                }
+                                                    for argument in command.arguments
+                                            },
+                                            'required': list(command.arguments.keys()),
+                                        } if len(command.arguments) > 0 else None,
+                                    )
+                                        for command in self.agent.commands
+                                ]
                             )
-                                for command in self.agent.commands
-                        ]
-                    )
-                ],
-                tool_config=types.ToolConfig(
-                    function_calling_config=types.FunctionCallingConfig(
-                        mode=types.FunctionCallingConfigMode.AUTO,
+                        ],
+                        tool_config=types.ToolConfig(
+                            function_calling_config=types.FunctionCallingConfig(
+                                mode=types.FunctionCallingConfigMode.AUTO,
+                            ),
+                        ),
                     ),
-                ),
-            ),
-        ).candidates[0].content
+                ).candidates[0].content
 
-        state.append(
-            request_content.model_dump(
-                mode='json',
-            )
-        )
-        state.append(
-            response_content.model_dump(
-                mode='json',
-            )
-        )
+                state.append(
+                    request_content.model_dump(
+                        mode='json',
+                    )
+                )
+                state.append(
+                    response_content.model_dump(
+                        mode='json',
+                    )
+                )
 
-        return response_content
+                return response_content
+            except Exception as e:
+                print(f'[red][DEBUG][/] Gemini Timeout or error occurred: {e}. Retrying in 30 seconds...')
+                sleep(30)
 
     def send_message(self, text: str) -> list[MessageModel]:
         messages: list[MessageModel] = [
