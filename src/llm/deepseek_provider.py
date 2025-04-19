@@ -11,7 +11,7 @@ load_dotenv(find_dotenv())
 
 DEEPSEEK_API_KEY = os.getenv('DEEPSEEK_API_KEY')
 
-DEEPSEEK_SYTEM_INSTRUCTION = []
+DEEPSEEK_SYSTEM_INSTRUCTION = []
 
 class DeepseekLLMProvider(LLMProvider):
     def __init__(self, db_provider: DBProvider, agent: Agent, id: str):
@@ -55,7 +55,7 @@ class DeepseekLLMProvider(LLMProvider):
                     'content': '\n'.join(
                         [
                             *self.agent.system_description,
-                            *DEEPSEEK_SYTEM_INSTRUCTION,
+                            *DEEPSEEK_SYSTEM_INSTRUCTION,
                         ]
                     ),
                 },

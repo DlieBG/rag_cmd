@@ -54,7 +54,7 @@ class Neo4JStoreAdapter(AgentAdapter):
             name='Neo4J Database Node Property Values',
             description=[
                 'Get the distinct values of a nodes property.',
-                'You should alawys query the possible values for your queries.',
+                'You should always query the possible values for your queries.',
             ],
         )
         def node_property_values(node_name: str, property_name: str):

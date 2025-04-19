@@ -15,7 +15,7 @@ load_dotenv(find_dotenv())
 
 GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
 
-GEMINI_SYTEM_INSTRUCTION = []
+GEMINI_SYSTEM_INSTRUCTION = []
 
 class GeminiLLMProvider(LLMProvider):
     def __init__(self, db_provider: DBProvider, agent: Agent, id: str):
@@ -72,7 +72,7 @@ class GeminiLLMProvider(LLMProvider):
                         system_instruction='\n'.join(
                             [
                                 *self.agent.system_description,
-                                *GEMINI_SYTEM_INSTRUCTION,
+                                *GEMINI_SYSTEM_INSTRUCTION,
                             ]
                         ),
                         tools=[
@@ -118,8 +118,8 @@ class GeminiLLMProvider(LLMProvider):
                 )
 
                 return response_content
-            except:
-                print('[red][DEBUG][/] Gemini Timeout, please wait...')
+            except Exception as e:
+                print(f'[red][DEBUG][/] Gemini Timeout or error occurred: {e}. Retrying in 30 seconds...')
                 sleep(30)
 
     def send_message(self, text: str) -> list[MessageModel]:
