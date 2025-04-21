@@ -63,10 +63,10 @@ class MongoChatModelProvider(ChatModelProvider):
                         exclude={'id'},
                     ),
                 ).inserted_id
-            )
+            ),
         )
     
-    def update_chat_model(self, id: str, chat_model: ChatModel) -> None:
+    def update_chat_model(self, id: str, chat_model: ChatModel):
         self.collection.update_one(
             filter={
                 '_id': ObjectId(id),

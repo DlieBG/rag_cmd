@@ -1,5 +1,7 @@
 from src.db.mongo.chat_model import MongoChatModelProvider
+from src.adapter.neo4j_sample import Neo4JSampleAdapter
 from src.adapter.neo4j_store import Neo4JStoreAdapter
+from src.db.mongo.sample import MongoSampleProvider
 from src.db.mongo.state import MongoStateProvider
 from src.db.mongo.cache import MongoCacheProvider
 from src.db.mongo.lock import MongoLockProvider
@@ -11,6 +13,7 @@ db_provider = DBProvider(
     lock_provider=MongoLockProvider(),
     state_provider=MongoStateProvider(),
     cache_provider=MongoCacheProvider(),
+    sample_provider=MongoSampleProvider(),
 )
 
 agent = Agent(
@@ -22,8 +25,9 @@ agent = Agent(
         'If you are in doubt, the database schema is always prioritized when it comes to nodes and relationships, never take the users input at face value.',
         'Always validate your actions against the schema.',
         '',
-        # 'Due to the complexity of the database, you should always query some sample queries with their descriptions before writing your own queries.',
-        # 'Also use the descriptions from the database experts to understand the logic of the database.',
+        'Due to the complexity of the database, you should always query some sample queries with their descriptions before writing your own queries.',
+        'Also use the descriptions from the database experts to understand the logic of the database.',
+        'Please keep the schema and examples in mind when writing your queries and remember them for further questions.',
         '',
         'If a query fails or returns no results, you should try to understand why and fix it before proceeding.',
         'Retry your commands with corrected parameters maximum 3 times.',
@@ -40,14 +44,14 @@ agent = Agent(
         'A good way anwer the questions is to use the following structure:',
         '1. Understand the question in detail.',
         '2. Divide the question into smaller parts.',
-        # 'x. Query sample queries with their descriptions by providing a small text for the similarity search.',
         '3. Query the database schema to understand the structure of the database and the relationships between the nodes.',
-        '4. Determine the nodes and relationships that are relevant to the question.',
-        '5. Get the possible values for the properties of nodes and relationships.',
-        '6. Write the Cypher query to retrieve the relevant data.',
-        '7. Evaluate the results and check if they are valid.',
-        '8. If needed execute more commands.',
-        '9. Answer the question with a friendly and helpful tone.',
+        '4. Query sample queries with their descriptions to better understand the database.',
+        '5. Determine the nodes and relationships that are relevant to the question.',
+        '6. Get the possible values for the properties of nodes and relationships.',
+        '7. Write the Cypher query to retrieve the relevant data.',
+        '8. Evaluate the results and check if they are valid.',
+        '9. If needed execute more commands.',
+        '10. Answer the question with a friendly and helpful tone.',
     ],
     db_provider=db_provider,
     cache_commands=True,
@@ -55,4 +59,9 @@ agent = Agent(
 
 Neo4JStoreAdapter(
     agent=agent,
+)
+
+Neo4JSampleAdapter(
+    agent=agent,
+    db_provider=db_provider,
 )
