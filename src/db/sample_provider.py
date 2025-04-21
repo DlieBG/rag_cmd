@@ -10,7 +10,7 @@ class SampleProvider:
     def create_sample(self, sample: SampleCommandCreate) -> SampleCommandId:
         raise NotImplementedError()
     
-    def update_sample(self, id: str, sample: SampleCommand):
+    def update_sample(self, id: str, sample: SampleCommandCreate):
         raise NotImplementedError()
     
     def remove_sample(self, id: str):
