@@ -53,11 +53,7 @@ class MongoSampleProvider(SampleProvider):
         return SampleCommandId(
             id=str(
                 self.collection.insert_one(
-                    document=SampleCommand(
-                        cypher=sample.cypher,
-                        tags=sample.tags,
-                        description=sample.description,
-                    ).model_dump(
+                    document=sample.model_dump(
                         mode='json',
                     ),
                 ).inserted_id,

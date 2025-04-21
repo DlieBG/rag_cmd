@@ -1,8 +1,10 @@
 from src.models.chat import RoleType, LLMType, MessageModel, ChatModel
+from src.models.sample import SampleCommandCreate
 from src.setup import db_provider, agent
 from rich.markdown import Markdown
 from rich.console import Console
 from src.core.chat import Chat
+from rich.prompt import Prompt
 from src.api import start_api
 from rich.table import Table
 from rich.panel import Panel
@@ -233,3 +235,107 @@ def debug_chat(llm_type: LLMType, rm: bool):
             db_provider.remove_chat(
                 id=chat_id,
             )
+
+@cli.group(
+    name='samples',
+    help='Sample commands.'
+)
+def samples():
+    pass
+
+@samples.command(
+    name='ls',
+    help='List all samples.',
+)
+def list_samples():
+    table = Table(
+        title='Samples',
+    )
+
+    table.add_column(
+        header='ID',
+        justify='left',
+    )
+    table.add_column(
+        header='Description',
+        justify='left',
+    )
+    table.add_column(
+        header='Tags',
+        justify='left',
+    )
+    table.add_column(
+        header='Cypher',
+        justify='left',
+    )
+
+    for sample in db_provider.sample.get_samples():
+        table.add_row(
+            sample.id,
+            sample.description,
+            ', '.join(sample.tags),
+            sample.cypher,
+        )
+
+    console = Console()
+    console.print(table)
+
+@samples.command(
+    name='create',
+    help='Create a new sample.',
+)
+@click.option(
+    '--cypher',
+    '-c',
+    type=str,
+    required=True,
+    prompt='Cypher query',
+    help='Cypher query to use.',
+)
+@click.option(
+    '--tags',
+    '-t',
+    type=str,
+    required=True,
+    prompt='Tags (comma separated)',
+    help='Tags to use.',
+)
+@click.option(
+    '--description',
+    '-d',
+    type=str,
+    required=True,
+    prompt='Description',
+    help='Description of the sample.',
+)
+def create_sample(cypher: str, tags: str, description: str):
+    tags = [tag.strip() for tag in tags.split(',')]
+
+    print(
+        db_provider.sample.create_sample(
+            sample=SampleCommandCreate(
+                cypher=cypher,
+                tags=tags,
+                description=description,
+            ),
+        )
+    )
+
+@samples.command(
+    name='rm',
+    help='Remove a sample.',
+)
+@click.option(
+    '--id',
+    '-i',
+    type=str,
+    required=True,
+    prompt='ID',
+    help='ID of the sample to delete.',
+)
+def remove_sample(id: str):
+    db_provider.sample.remove_sample(
+        id=id,
+    )
+
+    print(f'Sample {id} deleted.')
