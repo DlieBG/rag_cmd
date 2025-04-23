@@ -8,14 +8,14 @@ import uvicorn
 api = FastAPI()
 
 @api.get(
-    path='/chat',
+    path='/api/chat',
     tags=['Chat'],
 )
 def get_chats() -> list[ChatModel]:
     return db_provider.chat.get_chat_models()
 
 @api.get(
-    path='/chat/{id}',
+    path='/api/chat/{id}',
     tags=['Chat'],
 )
 def get_chat(id: str) -> ChatModel:
@@ -24,7 +24,7 @@ def get_chat(id: str) -> ChatModel:
     )
 
 @api.post(
-    path='/chat',
+    path='/api/chat',
     tags=['Chat'],
     status_code=201,
 )
@@ -34,7 +34,7 @@ def create_chat(llm_type: LLMType) -> ChatIdModel:
     )
 
 @api.put(
-    path='/chat/{id}/message',
+    path='/api/chat/{id}/message',
     tags=['Chat'],
 )
 def send_message(id: str, text: str) -> list[MessageModel]:
@@ -49,7 +49,7 @@ def send_message(id: str, text: str) -> list[MessageModel]:
     )
 
 @api.delete(
-    path='/chat/{id}',
+    path='/api/chat/{id}',
     tags=['Chat'],
     status_code=204,
 )
@@ -59,14 +59,14 @@ def remove_chat(id: str):
     )
 
 @api.get(
-    path='/sample',
+    path='/api/sample',
     tags=['Sample'],
 )
 def get_samples() -> list[SampleCommand]:
     return db_provider.sample.get_samples()
 
 @api.get(
-    path='/sample/{id}',
+    path='/api/sample/{id}',
     tags=['Sample'],
 )
 def get_sample(id: str) -> SampleCommand:
@@ -75,7 +75,7 @@ def get_sample(id: str) -> SampleCommand:
     )
 
 @api.post(
-    path='/sample',
+    path='/api/sample',
     tags=['Sample'],
     status_code=201,
 )
@@ -85,7 +85,7 @@ def create_sample(sample: SampleCommandCreate) -> SampleCommandId:
     )
 
 @api.put(
-    path='/sample/{id}',
+    path='/api/sample/{id}',
     tags=['Sample'],
     status_code=204,
 )
@@ -96,7 +96,7 @@ def update_sample(id: str, sample: SampleCommandCreate):
     )
 
 @api.delete(
-    path='/sample/{id}',
+    path='/api/sample/{id}',
     tags=['Sample'],
     status_code=204,
 )
