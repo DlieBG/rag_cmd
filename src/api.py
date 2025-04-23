@@ -1,5 +1,5 @@
+from src.models.chat import ChatReducedModel, ChatIdModel, ChatModel, LLMType, MessageModel
 from src.models.sample import SampleCommand, SampleCommandCreate, SampleCommandId
-from src.models.chat import ChatIdModel, ChatModel, LLMType, MessageModel
 from src.setup import db_provider, agent
 from src.core.chat import Chat
 from fastapi import FastAPI
@@ -11,7 +11,7 @@ api = FastAPI()
     path='/api/chat',
     tags=['Chat'],
 )
-def get_chats() -> list[ChatModel]:
+def get_chats() -> list[ChatReducedModel]:
     return db_provider.chat.get_chat_models()
 
 @api.get(

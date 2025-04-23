@@ -31,3 +31,8 @@ class ChatModel(BaseModel):
 
 class ChatIdModel(BaseModel):
     id: str
+
+class ChatReducedModel(BaseModel):
+    id: str
+    llm_type: LLMType
+    title: Optional[str] = None

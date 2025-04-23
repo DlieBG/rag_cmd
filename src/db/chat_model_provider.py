@@ -1,7 +1,7 @@
-from src.models.chat import ChatIdModel, ChatModel, LLMType
+from src.models.chat import ChatReducedModel, ChatIdModel, ChatModel, LLMType
 
 class ChatModelProvider:
-    def get_chat_models(self) -> list[ChatModel]:
+    def get_chat_models(self) -> list[ChatReducedModel]:
         raise NotImplementedError()
 
     def get_chat_model(self, id: str) -> ChatModel:
