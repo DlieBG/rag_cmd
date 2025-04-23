@@ -1,4 +1,4 @@
-from src.models.chat import ChatIdModel, ChatModel, LLMType, MessageModel
+from src.models.chat import ChatReducedModel, ChatIdModel, ChatModel, LLMType, MessageModel
 from src.db.chat_model_provider import ChatModelProvider
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
@@ -33,13 +33,18 @@ class MongoChatModelProvider(ChatModelProvider):
             ],
         )
 
-    def get_chat_models(self) -> list[ChatModel]:
+    def get_chat_models(self) -> list[ChatReducedModel]:
         return [
-            self._to_chat_model(
-                chat_model=chat_model,
+            ChatReducedModel(
+                id=str(chat_model['_id']),
+                llm_type=LLMType(chat_model['llm_type']),
+                title=chat_model.get('title'),
             )
                 for chat_model in self.collection.find(
                     filter={},
+                    projection={
+                        'messages': 0,
+                    },
                 )
         ]
 
