@@ -1,0 +1,4 @@
+<p>chat-list works!</p>
+@if (chats$ | async; as chats) {
+    <pre>{{chats|json}}</pre>
+}
