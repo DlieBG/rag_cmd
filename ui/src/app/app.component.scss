@@ -1,0 +1,23 @@
+.body {
+    height: 100%;
+}
+
+.spacer {
+    flex: 1 1 auto;
+}
+
+.wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    height: calc(100% - 64px);
+}
+
+.sidebar {
+    overflow: scroll;
+    width: 375px;
+}
+
+.main {
+    width: 100%;
+}
