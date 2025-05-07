@@ -30,3 +30,10 @@ When you want to send messages and read messages in a chat, you can use the `con
 ```bash
 rag_cmd chats connect --id <id>
 ```
+
+## UML
+### Classdiagram
+![UML Classdiagram](diagrams/Classdiagram.drawio.png)
+
+## Sequencediagram
+![UML Sequencediagram](diagrams/Sequencediagram.drawio.png)
