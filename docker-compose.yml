@@ -1,0 +1,39 @@
+services:
+  rag_cmd:
+    image: ghcr.io/dliebg/rag_cmd/rag_cmd:latest
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      - NEO4J_URI=bolt://neo4j:7687/neo4j
+    ports:
+      - 8000:8000
+    entrypoint: ['rag_cmd']
+    command: ['api']
+
+  neo4j:
+    image: neo4j:5.23.0
+    environment:
+      - NEO4J_AUTH=${NEO4J_USER}/${NEO4J_PASSWORD}
+      - NEO4J_PLUGINS=["apoc"]
+      - NEO4J_dbms_security_procedures_unrestricted=apoc.\*
+    ports:
+      - 7474:7474
+      - 7687:7687
+    volumes:
+      - ./db/data:/data:z
+      - ./db/backup:/backup:z
+      - ./db/apoc.conf:/var/lib/neo4j/conf/apoc.conf:z
+    command: >
+      sh -c "
+        if [ ! -d /data/databases/neo4j ]; then
+          echo 'Database not found. Loading the backup into the Neo4j database...';
+          neo4j-admin database load neo4j --from-path=/backup --overwrite-destination=true;
+          echo 'Deleting the system database to reset authentication...';
+          rm -rf /data/databases/system /data/transactions/system;
+          # Removed the set-initial-password command
+        else
+          echo 'Database already exists. Skipping backup loading and password reset.';
+        fi;
+        echo 'Starting the Neo4j server...';
+        neo4j console;
+      "
