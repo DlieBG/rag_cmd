@@ -1,3 +1,5 @@
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/DlieBG/rag_cmd)
+
 # rag_cmd
 A Pythonic way to define precise RAG commands for smarter LLMs.
 
