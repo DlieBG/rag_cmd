@@ -1,10 +1,13 @@
 from src.models.chat import RoleType, LLMType, MessageModel, ChatModel
+from src.adapter.schema_override import SchemaOverrideAdapter
 from src.models.sample import SampleCommandCreate
+from src.models.schema import SchemaType
+from src.models.scenario import Scenario
 from src.setup import db_provider, agent
+from rich.prompt import Confirm, Prompt
 from rich.markdown import Markdown
 from rich.console import Console
 from src.core.chat import Chat
-from rich.prompt import Prompt
 from src.api import start_api
 from rich.table import Table
 from rich.panel import Panel
@@ -235,6 +238,78 @@ def debug_chat(llm_type: LLMType, rm: bool):
             db_provider.remove_chat(
                 id=chat_id,
             )
+
+@chats.command(
+    name='scenario',
+    help='Create a new chat and replay a scenario file.',
+)
+@click.option(
+    '--file',
+    '-f',
+    type=click.Path(
+        exists=True,
+        dir_okay=False,
+        file_okay=True,
+    ),
+    required=True,
+)
+def scenario_chat(file: str):
+    console = Console()
+
+    with open(file, 'r') as f:
+        scenario = Scenario.model_validate_json(
+            json_data=f.read(),
+        )
+
+        if scenario.override_schema:
+            if not scenario.override_schema_type:
+                scenario.override_schema_type = Prompt.ask(
+                    prompt='[magenta]How to override the schema?',
+                    choices=SchemaType,
+                    console=console,
+                    default=SchemaType.DEFAULT,
+                )
+
+            SchemaOverrideAdapter(
+                agent=agent,
+                schema_type=scenario.override_schema_type,
+            )
+
+        chat_model = db_provider.chat.create_chat_model(
+            llm_type=scenario.llm_type,
+        )
+        chat = Chat(
+            db_provider=db_provider,
+            agent=agent,
+            id=chat_model.id,
+        )
+
+        for question in scenario.questions:
+            messages = []
+
+            with console.status('[magenta]Generating...'):
+                messages = chat.send_message(
+                    text=question,
+                )
+
+            for message_model in messages:
+                _render_message(
+                    console=console,
+                    message_model=message_model,
+                )
+
+    if Confirm.ask(
+        prompt='[magenta]Do you want to save the chat?',
+        default=True,
+        console=console,
+    ):
+        return console.print(
+            f'[magenta]Chat saved with ID: [red]{chat_model.id}'
+        )
+        
+    db_provider.remove_chat(
+        id=chat_model.id,
+    )
 
 @cli.group(
     name='samples',
