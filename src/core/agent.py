@@ -10,11 +10,16 @@ class Agent:
         self.cache_commands = cache_commands
 
         self.commands: list[Command] = []
+        self.omit_cache_commands: list[str] = []
 
-    def command(self, name: str, description: list[str]) -> callable:
+    def command(self, name: str, description: list[str], omit_cache: bool = False) -> callable:
         """ Decorator to register a command function.
         """
         def decorator(command_function: callable):
+            for command in self.commands:
+                if command.name == name.replace(' ', '_').lower():
+                    self.commands.remove(command)
+
             self.commands.append(
                 Command(
                     name=name.replace(' ', '_').lower(),
@@ -27,19 +32,25 @@ class Agent:
                 )
             )
 
+            if omit_cache:
+                self.omit_cache_commands.append(
+                    name.replace(' ', '_').lower()
+                )
+
         return decorator
 
     def execute_command(self, command_name: str, arguments: dict) -> tuple[str, bool]:
         """ Execute a registered command.
         """
         if self.cache_commands:
-            if (result := self.db_provider.cache.get_cached_command(
-                key={
-                    'command_name': command_name,
-                    'arguments': arguments,
-                },
-            )):
-                return result, True
+            if command_name not in self.omit_cache_commands:
+                if (result := self.db_provider.cache.get_cached_command(
+                    key={
+                        'command_name': command_name,
+                        'arguments': arguments,
+                    },
+                )):
+                    return result, True
 
         for command in self.commands:
             if command.name == command_name:
@@ -48,13 +59,14 @@ class Agent:
                 )
 
                 if self.cache_commands:
-                    self.db_provider.cache.set_cached_command(
-                        key={
-                            'command_name': command_name,
-                            'arguments': arguments,
-                        },
-                        result=result,
-                    )
+                    if command_name not in self.omit_cache_commands:
+                        self.db_provider.cache.set_cached_command(
+                            key={
+                                'command_name': command_name,
+                                'arguments': arguments,
+                            },
+                            result=result,
+                        )
 
                 return result, False
 

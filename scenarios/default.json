@@ -1,0 +1,8 @@
+{
+    "questions": [
+        "How many patients are in remission?",
+        "What is the average age of patients in the study?"
+    ],
+    "llm_type": "gemini",
+    "override_schema": true
+}
