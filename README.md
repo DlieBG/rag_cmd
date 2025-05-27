@@ -44,6 +44,29 @@ If you want to use the cli inside docker, you can use the following command:
 docker compose exec rag_cmd rag_cmd chats debug --llm-type GEMINI
 ```
 
+## Scenarios
+To simplify testing, scenarios can be defined in JSON files and executed automatically.\
+You can also specify whether the Neo4J schema generation should be overwritten with a different implementation.\
+The scenario scheme is as follows:
+```json
+{
+    "questions": [
+        "string"
+    ],
+    "llm_type": "gemini|deepseek",
+    "override_schema": true,
+    "override_schema_type": null // or use default|clique|hypergraph to skip the select prompt
+}
+```
+To start the scenario run the following command:
+```
+rag_cmd chats scenario -f scenarios/default.json
+```
+Or with docker compose:
+```
+docker compose exec rag_cmd rag_cmd chats scenario -f scenarios/default.json
+```
+
 ## UML
 ### Classdiagram
 ![UML Classdiagram](diagrams/Classdiagram.drawio.png)
