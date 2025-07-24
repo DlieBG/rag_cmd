@@ -20,8 +20,8 @@ services:
       - 7474:7474
       - 7687:7687
     volumes:
-      - ./db/data:/data
-      - ./db/backup:/backup
+      - ./db/data:/data:Z
+      - ./db/backup:/backup:Z
       - ./db/apoc.conf:/var/lib/neo4j/conf/apoc.conf:Z
     command: >
       sh -c "

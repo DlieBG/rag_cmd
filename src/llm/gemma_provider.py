@@ -13,11 +13,11 @@ import os
 
 load_dotenv(find_dotenv())
 
-GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
+GEMMA_API_KEY = os.getenv('GEMMA_API_KEY')
 
-GEMINI_SYSTEM_INSTRUCTION = []
+GEMMA_SYSTEM_INSTRUCTION = []
 
-class GeminiLLMProvider(LLMProvider):
+class GemmaLLMProvider(LLMProvider):
     def __init__(self, db_provider: DBProvider, agent: Agent, id: str):
         super().__init__(
             db_provider=db_provider,
@@ -26,7 +26,7 @@ class GeminiLLMProvider(LLMProvider):
         )
 
         self.client = genai.Client(
-            api_key=GEMINI_API_KEY,
+            api_key=GEMMA_API_KEY,
         )
 
     def _to_gemini_data_type(self, data_type: str) -> str:
@@ -136,7 +136,7 @@ class GeminiLLMProvider(LLMProvider):
         )
 
         chat = self.client.chats.create(
-            model='gemini-2.5-flash',
+            model='gemma-3n-e4b-it',
             history=[
                 Content.model_validate(content)
                     for content in state

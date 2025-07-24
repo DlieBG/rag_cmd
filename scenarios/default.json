@@ -4,5 +4,5 @@
         "What is the average age of patients in the study?"
     ],
     "llm_type": "gemini",
-    "override_schema": true
+    "override_schema": false
 }

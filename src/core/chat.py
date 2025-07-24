@@ -1,5 +1,6 @@
 from src.llm.deepseek_provider import DeepseekLLMProvider
 from src.llm.gemini_provider import GeminiLLMProvider
+from src.llm.gemma_provider import GemmaLLMProvider
 from src.models.chat import LLMType, MessageModel
 from src.llm.llm_provider import LLMProvider
 from src.db.db_provider import DBProvider
@@ -30,6 +31,8 @@ class Chat:
                 return GeminiLLMProvider
             case LLMType.DEEPSEEK:
                 return DeepseekLLMProvider
+            case LLMType.GEMMA:
+                return GemmaLLMProvider
             case _:
                 raise Exception('LLM type not supported.')
 

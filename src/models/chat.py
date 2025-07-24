@@ -22,6 +22,7 @@ class MessageModel(BaseModel):
 class LLMType(StrEnum):
     GEMINI = 'gemini'
     DEEPSEEK = 'deepseek'
+    GEMMA = 'gemma'
 
 class ChatModel(BaseModel):
     id: str = None
